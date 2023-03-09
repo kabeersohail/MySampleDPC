@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MySampleDPC</string>
     <string name="app_description">My App description</string>
+    <string name="uninstall">Uninstall</string>
 </resources>
