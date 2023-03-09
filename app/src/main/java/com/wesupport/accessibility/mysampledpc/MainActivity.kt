@@ -19,6 +19,5 @@ class MainActivity : AppCompatActivity() {
         binding.uninstall.setOnClickListener {
             PackageInstallationUtils().uninstallPackage(this, "com.weguard.android")
         }
-
     }
 }
