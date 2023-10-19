@@ -1,12 +1,16 @@
 package com.wesupport.accessibility.mysampledpc.wifimanager
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.wifi.WifiConfiguration
+import android.net.wifi.WifiManager
 import android.net.wifi.WifiNetworkSpecifier
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import com.wesupport.accessibility.mysampledpc.R
 import com.wesupport.accessibility.mysampledpc.extensions.TAG
 import com.wesupport.accessibility.mysampledpc.utils.DpcNumbers.FIFTY_EIGHT
@@ -122,6 +126,39 @@ class MyWifiManager @Inject constructor(
         Log.d(TAG, "getQuotedString:: ")
 
         return "\"$string\""
+    }
+
+    @Suppress("Deprecation")
+    fun removeNetwork() {
+        Log.d(TAG, "removeNetwork:: ")
+
+
+        val wifiManager = context.applicationContext.getSystemService(WifiManager::class.java)
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(TAG, "removeNetwork:: ACCESS_FINE_LOCATION permission is not granted")
+
+            //  Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+
+        wifiManager.configuredNetworks.forEach {
+
+            it.SSID?.let { ssid ->
+                Log.d(TAG, ssid)
+            }
+
+            wifiManager.removeNetwork(it.networkId)
+        }
     }
 
 }

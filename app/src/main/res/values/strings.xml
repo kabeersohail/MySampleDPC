@@ -5,4 +5,5 @@
     <string name="wifi_config_success">WI-FI configuration saved.</string>
     <string name="wifi_config_fail">Failed to save the WI-FI configuration.</string>
     <string name="save_wifi_configuration">Save WIFI Configuration</string>
+    <string name="remove_wifi_configuration">Remove Wifi Configuration</string>
 </resources>
