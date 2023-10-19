@@ -2,4 +2,7 @@
     <string name="app_name">MySampleDPC</string>
     <string name="app_description">My App description</string>
     <string name="uninstall">Uninstall</string>
+    <string name="wifi_config_success">WI-FI configuration saved.</string>
+    <string name="wifi_config_fail">Failed to save the WI-FI configuration.</string>
+    <string name="save_wifi_configuration">Save WIFI Configuration</string>
 </resources>
