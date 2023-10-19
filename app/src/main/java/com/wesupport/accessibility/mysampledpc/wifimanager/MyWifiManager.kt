@@ -24,11 +24,11 @@ import com.wesupport.accessibility.mysampledpc.utils.WifiConfigUtil
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+@Suppress("Deprecation")
 class MyWifiManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-    @Suppress("Deprecation")
     private val mOldConfig: WifiConfiguration? = null
 
     fun wifiConfigurationCompat(ssid: String, securityType: Int, password: String) {
@@ -38,7 +38,6 @@ class MyWifiManager @Inject constructor(
 //            Log.d(TAG, "wifiConfigurationCompat:: calling wifiConfigurationFor29AndAbove()")
 //            wifiConfigurationFor29AndAbove()
 //        } else {
-            @Suppress("Deprecation")
             val wifiConfiguration = WifiConfiguration()
 
             Log.d(TAG, "wifiConfigurationCompat:: calling wifiConfigurationFor28AndBelow()")
@@ -46,7 +45,6 @@ class MyWifiManager @Inject constructor(
 //        }
     }
 
-    @Suppress("Deprecation")
     private fun WifiConfiguration.wifiConfigurationFor28AndBelow(ssid: String, securityType: Int, password: String) {
         Log.d(TAG, "wifiConfigurationFor28AndBelow:: ssid: $ssid securityType: $securityType password: $password")
 
@@ -68,7 +66,6 @@ class MyWifiManager @Inject constructor(
     }
 
 
-    @Suppress("Deprecation")
     private fun WifiConfiguration.updateConfigurationSecurity(
         securityType: Int,
         password: String
@@ -122,18 +119,40 @@ class MyWifiManager @Inject constructor(
         WifiNetworkSpecifier.Builder().build()
     }
 
-    private fun getQuotedString(string: String): String {
+    fun getQuotedString(string: String): String {
         Log.d(TAG, "getQuotedString:: ")
 
         return "\"$string\""
     }
 
     @Suppress("Deprecation")
-    fun removeNetwork() {
+    fun removeNetwork(wifiManager: WifiManager, networkId: Int) {
         Log.d(TAG, "removeNetwork:: ")
 
+        val result = wifiManager.removeNetwork(networkId)
+
+        if(result) {
+            Log.d(TAG, "removeNetwork:: Successfully removed")
+        } else {
+            Log.d(TAG, "removeNetwork:: Failed to remove")
+        }
+    }
+
+    fun removeAllNetworks() {
+        Log.d(TAG, "removeAllNetworks:: ")
 
         val wifiManager = context.applicationContext.getSystemService(WifiManager::class.java)
+
+        getConfiguredNetworksDO(wifiManager).forEach {
+            it.SSID?.let { ssid ->
+                Log.d(TAG, ssid)
+
+                removeNetwork(wifiManager, it.networkId)
+            }
+        }
+    }
+
+    fun getConfiguredNetworksDO(wifiManager: WifiManager): List<WifiConfiguration> {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -148,17 +167,23 @@ class MyWifiManager @Inject constructor(
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return
+            return emptyList()
         }
 
-        wifiManager.configuredNetworks.forEach {
+        return wifiManager.configuredNetworks
+    }
 
-            it.SSID?.let { ssid ->
-                Log.d(TAG, ssid)
-            }
-
-            wifiManager.removeNetwork(it.networkId)
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun removeAllNetworksNotOwnedByDO() {
+        val removed: Boolean = context.getSystemService(WifiManager::class.java).removeNonCallerConfiguredNetworks()
+        if (removed) {
+            Log.d(TAG, "One or more networks are removed")
+        } else {
+            Log.d(TAG, "No network is removed")
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun WifiManager.getCallerConfiguredNetworksDO() =  callerConfiguredNetworks
 
 }

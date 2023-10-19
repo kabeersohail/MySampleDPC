@@ -1,8 +1,12 @@
 package com.wesupport.accessibility.mysampledpc
 
 import android.content.pm.PackageManager
+import android.net.wifi.WifiConfiguration
+import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -27,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 // Permission is granted, perform your actions here
-                myWifiManager.removeNetwork()
+                myWifiManager.removeAllNetworks()
             } else {
                 // Permission is denied, handle it accordingly
                 Log.d(TAG, "Access fine location is not granted")
@@ -37,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        requestLocationPermission()
 
         binding.saveWifiConfiguration.setOnClickListener {
             Log.d(TAG, "saveWifiConfiguration button clicked")
@@ -49,17 +55,43 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.removeWifiConfiguration.setOnClickListener {
+
+            val wifiManager = applicationContext.getSystemService(WifiManager::class.java)
+
+            val config: WifiConfiguration = myWifiManager.getConfiguredNetworksDO(wifiManager).firstOrNull { it.SSID == myWifiManager.getQuotedString("We-Share") } ?: run {
+                Toast.makeText(
+                    this,
+                    "Not available",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            myWifiManager.removeNetwork(wifiManager, config.networkId)
+        }
+
+        binding.removeAllNetworks.setOnClickListener {
             requestLocationPermission()
         }
+
+        binding.removeAllNetworksNotOwnedByDo.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                myWifiManager.removeAllNetworksNotOwnedByDO()
+            } else {
+                Toast.makeText(this, "Option not available", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 
     private fun requestLocationPermission() {
-        when {
+        when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(
                 this,
                 "android.permission.ACCESS_FINE_LOCATION"
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                myWifiManager.removeNetwork()
+            ) -> {
+                myWifiManager.removeAllNetworks()
             }
             else -> {
                 // Permission is not granted, request it

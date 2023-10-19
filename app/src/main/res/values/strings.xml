@@ -6,4 +6,6 @@
     <string name="wifi_config_fail">Failed to save the WI-FI configuration.</string>
     <string name="save_wifi_configuration">Save WIFI Configuration</string>
     <string name="remove_wifi_configuration">Remove Wifi Configuration</string>
+    <string name="remove_all_networks">Remove all networks</string>
+    <string name="remove_all_networks_not_owned_by_do">Remove all networks not owned by DO</string>
 </resources>
