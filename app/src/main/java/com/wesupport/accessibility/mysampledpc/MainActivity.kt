@@ -11,7 +11,6 @@ import com.wesupport.accessibility.mysampledpc.adminreciever.MyAdminReceiver
 import com.wesupport.accessibility.mysampledpc.advancedcertificatemanagement.AdvancedCertificateManagement
 import com.wesupport.accessibility.mysampledpc.advancedcertificatemanagement.SetupCertificate
 import com.wesupport.accessibility.mysampledpc.databinding.ActivityMainBinding
-import com.wesupport.accessibility.mysampledpc.utils.PackageInstallationUtils
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         storeCertificateInInternalStorage()
 
         binding.installCertificate.setOnClickListener {
-            advancedCertificateManagement.execute()
+            advancedCertificateManagement.installACertificate()
         }
 
         binding.getInstalledCertificates.setOnClickListener {
@@ -41,6 +40,10 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, installedCertificates?.toList().toString(), Toast.LENGTH_SHORT).show()
         }
 
+        binding.removeAllInstalledCertificate.setOnClickListener {
+            advancedCertificateManagement.removeAllInstalledCertificates()
+            Toast.makeText(this, "All CA certificates have been removed.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun storeCertificateInInternalStorage() {
@@ -50,7 +53,5 @@ class MainActivity : AppCompatActivity() {
 
         val inputStream = setupCertificate.getInputStreamFromRawResource(this, rawResId)
         setupCertificate.copyToInternalStorage(this, inputStream, "ca.crt")
-
     }
-
 }

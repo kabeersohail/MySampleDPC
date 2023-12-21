@@ -67,10 +67,14 @@ class AdvancedCertificateManagement(
     }
 
 
-    fun execute() {
+    fun installACertificate() {
         val filePath = "/data/user/0/com.wesupport.accessibility.mysampledpc/files/ca.crt"
         val certificateInputStream = getInputStreamFromFilePath(filePath)
         val success = installCaCertificate(certificateInputStream)
+    }
+
+    fun removeAllInstalledCertificates() {
+        devicePolicyManager.uninstallAllUserCaCerts(adminComponent)
     }
 
 }
