@@ -25,7 +25,7 @@ class AdvancedCertificateManagement(
         devicePolicyManager.uninstallAllUserCaCerts(adminComponent)
     }
 
-    private fun getCaCertificateSubjectDnList(): Array<String?>? {
+    fun getCaCertificateSubjectDnList(): Array<String?>? {
         val installedCaCerts: List<ByteArray> = devicePolicyManager.getInstalledCaCerts(adminComponent)
         var caSubjectDnList: Array<String?>? = null
         if (installedCaCerts.isNotEmpty()) {

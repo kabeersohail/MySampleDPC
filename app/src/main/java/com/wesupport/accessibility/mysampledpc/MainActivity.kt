@@ -4,6 +4,7 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.wesupport.accessibility.mysampledpc.adminreciever.MyAdminReceiver
@@ -24,15 +25,22 @@ class MainActivity : AppCompatActivity() {
 
         val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val adminComponentName = ComponentName(this, MyAdminReceiver::class.java)
+        val advancedCertificateManagement = AdvancedCertificateManagement(
+            dpm,
+            adminComponentName
+        )
 
         storeCertificateInInternalStorage()
 
         binding.installCertificate.setOnClickListener {
-            AdvancedCertificateManagement(
-                dpm,
-                adminComponentName
-            ).execute()
+            advancedCertificateManagement.execute()
         }
+
+        binding.getInstalledCertificates.setOnClickListener {
+            val installedCertificates = advancedCertificateManagement.getCaCertificateSubjectDnList()
+            Toast.makeText(this, installedCertificates?.toList().toString(), Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun storeCertificateInInternalStorage() {
