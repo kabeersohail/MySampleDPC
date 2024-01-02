@@ -3,6 +3,7 @@ package com.wesupport.accessibility.mysampledpc
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -44,6 +45,16 @@ class MainActivity : AppCompatActivity() {
             advancedCertificateManagement.removeAllInstalledCertificates()
             Toast.makeText(this, "All CA certificates have been removed.", Toast.LENGTH_SHORT).show()
         }
+
+        binding.grantKeyPairToPackage.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                advancedCertificateManagement.grantKeyPairToPackage(
+                    "Get key alias for certificate",
+                    "get package name that requires certificate via user prompt"
+                )
+            }
+        }
+
     }
 
     private fun storeCertificateInInternalStorage() {

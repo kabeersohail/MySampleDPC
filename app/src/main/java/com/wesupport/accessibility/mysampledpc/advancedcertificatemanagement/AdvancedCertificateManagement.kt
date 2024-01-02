@@ -2,7 +2,9 @@ package com.wesupport.accessibility.mysampledpc.advancedcertificatemanagement
 
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.wesupport.accessibility.mysampledpc.extensions.TAG
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -75,6 +77,23 @@ class AdvancedCertificateManagement(
 
     fun removeAllInstalledCertificates() {
         devicePolicyManager.uninstallAllUserCaCerts(adminComponent)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun grantKeyPairToPackage(keyAlias: String, packageName: String) {
+        var status = false
+        try {
+            status = devicePolicyManager.grantKeyPairToApp(adminComponent, keyAlias, packageName)
+        } catch (e: SecurityException) {
+            Log.e(TAG, "Error invoking grantKeyPairToApp", e)
+        } catch (e: IllegalArgumentException) {
+            Log.e(TAG, "Error invoking grantKeyPairToApp", e)
+        }
+        if (status) {
+            Log.d(TAG, "KeyPair granted successfully")
+        } else {
+            Log.d(TAG, "KeyPair grant failed")
+        }
     }
 
 }

@@ -5,4 +5,5 @@
     <string name="install_certificate">Install Certificate</string>
     <string name="get_installed_certificates">Get Installed Certificates</string>
     <string name="remove_all_installed_certificate">Remove all installed certificate</string>
+    <string name="grant_key_pair_to_package">Grant key pair to package</string>
 </resources>
